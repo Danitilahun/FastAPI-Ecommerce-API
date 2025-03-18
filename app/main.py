@@ -2,7 +2,7 @@ from fastapi import FastAPI , APIRouter
 
 test_router = APIRouter()
 
-@test_router.get("/test")
+@test_router.get("/")
 async def test_endpoint():
     return {"message": "Test endpoint works!"}
 
