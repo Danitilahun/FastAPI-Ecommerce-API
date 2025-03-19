@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, constr
 from datetime import datetime
 from typing import List
 from app.schemas.orders import OrderBase
@@ -27,8 +27,8 @@ class UserBase(BaseModel):
 class Signup(BaseModel):
     full_name: str
     username: str
-    email: str
-    password: str
+    email: EmailStr  
+    password: constr(min_length=8)
 
     class Config(BaseConfig):
         pass
