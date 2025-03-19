@@ -26,7 +26,6 @@ class AuthService:
 
     @staticmethod
     async def signup(db: Session, user: Signup):
-        # Check if the email or username already exists
         existing_user = db.query(User).filter((User.username == user.username) | (User.email == user.email)).first()
         
         if existing_user:
@@ -35,14 +34,11 @@ class AuthService:
                 detail="Username or email already exists."
             )
         
-        # Hash the password before storing it
         hashed_password = get_password_hash(user.password)
         user.password = hashed_password
         
-        # Create a new user instance
         db_user = User(id=None, **user.model_dump())
         
-        # Add and commit to the database
         db.add(db_user)
         db.commit()
         db.refresh(db_user)
@@ -51,24 +47,46 @@ class AuthService:
     
     @staticmethod
     async def create_admin(db: Session, user: Signup):
+        existing_user = db.query(User).filter((User.username == user.username) | (User.email == user.email)).first()
+        
+        if existing_user:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="Username or email already exists."
+            )
+        
         hashed_password = get_password_hash(user.password)
         user.password = hashed_password
+        
         db_user = User(id=None, **user.model_dump())
         db_user.role = "admin"
+        
         db.add(db_user)
         db.commit()
         db.refresh(db_user)
+        
         return ResponseHandler.create_success(db_user.username, db_user.id, db_user)
 
+
     @staticmethod
-    async def get_refresh_token(token, db):
-        payload = get_token_payload(token)
-        user_id = payload.get('id', None)
-        if not user_id:
-            raise ResponseHandler.invalid_token('refresh')
+    async def get_refresh_token(token: str, db: Session):
+        try:
+            print("token", token)
+            payload = get_token_payload(token)
+            user_id = payload.get("id")
+            print(f"Payload: {payload}, User ID: {user_id}")
+            
+            if not user_id:
+                raise ResponseHandler.invalid_token("refresh")
+                
+            user = db.query(User).filter(User.id == user_id).first()
+            
+            if not user:
+                raise ResponseHandler.invalid_token("refresh")
+                
+            return await get_user_token(user.id)
+        except Exception as e:
+            print(f"Error: {str(e)}")
+            raise ResponseHandler.invalid_token("refresh")
 
-        user = db.query(User).filter(User.id == user_id).first()
-        if not user:
-            raise ResponseHandler.invalid_token('refresh')
 
-        return await get_user_token(id=user.id, refresh_token=token)

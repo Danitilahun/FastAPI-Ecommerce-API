@@ -1,25 +1,5 @@
-import pytest
 from fastapi.testclient import TestClient
-from app.main import app
-from app.schemas.auth import Signup
-from app.models.models import User
-from app.core.security import get_password_hash
-from sqlalchemy.orm import Session
 from fastapi import status
-from app.db.database import get_db
-import uuid
-from pydantic import ValidationError
-
-
-@pytest.fixture
-def new_user():
-    unique_id = str(uuid.uuid4())
-    return {
-        "full_name": "Test User",
-        "username": f"testuser_{unique_id}",
-        "email": f"testuser_{unique_id}@example.com",
-        "password": "testpassword123"
-    }
 
 class TestAuthSignup:
     """Test class for authentication signup functionality"""
@@ -73,3 +53,4 @@ class TestAuthSignup:
         }  # Missing full_name and password
         response = client.post("/auth/signup", json=incomplete_user)
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+

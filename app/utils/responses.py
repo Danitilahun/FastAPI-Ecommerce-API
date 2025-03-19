@@ -36,3 +36,4 @@ class ResponseHandler:
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail=f"Invalid {name} token.",
             headers={"WWW-Authenticate": "Bearer"})
+        
