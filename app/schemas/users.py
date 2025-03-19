@@ -1,10 +1,9 @@
-from pydantic import BaseModel, EmailStr
-from datetime import datetime
+from pydantic import BaseModel , EmailStr
 from typing import List
+from datetime import datetime
 from app.schemas.orders import OrderBase
 
 
-# Base
 class BaseConfig:
     from_attributes = True
 
@@ -24,7 +23,7 @@ class UserBase(BaseModel):
         pass
 
 
-class Signup(BaseModel):
+class UserCreate(BaseModel):
     full_name: str
     username: str
     email: str
@@ -32,6 +31,10 @@ class Signup(BaseModel):
 
     class Config(BaseConfig):
         pass
+
+
+class UserUpdate(UserCreate):
+    pass
 
 
 class UserOut(BaseModel):
@@ -42,9 +45,17 @@ class UserOut(BaseModel):
         pass
 
 
-# Token
-class TokenResponse(BaseModel):
-    access_token: str
-    refresh_token: str
-    token_type: str = 'Bearer'
-    expires_in: int
+class UsersOut(BaseModel):
+    message: str
+    data: List[UserBase]
+
+    class Config(BaseConfig):
+        pass
+
+
+class UserOutDelete(BaseModel):
+    message: str
+    data: UserBase
+
+    class Config(BaseConfig):
+        pass

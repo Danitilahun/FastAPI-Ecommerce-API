@@ -1,49 +1,59 @@
-from passlib.context import CryptContext
-from datetime import datetime, timedelta
-from jose import JWTError, jwt
+from fastapi import HTTPException, Depends, status
+from fastapi.security.oauth2 import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
-from fastapi import HTTPException
-from app.core.config import settings
-
 from app.models.models import User
+from app.db.database import get_db
+from app.core.security import verify_password, get_user_token, get_token_payload
+from app.core.security import get_password_hash
+from app.utils.responses import ResponseHandler
+from app.schemas.auth import Signup
+
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
 
 class AuthService:
+    @staticmethod
+    async def login(user_credentials: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
+        user = db.query(User).filter(User.username == user_credentials.username).first()
+        if not user:
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Invalid Credentials")
 
-    SECRET_KEY = settings.secret_key
-    ALGORITHM = settings.algorithm
-    ACCESS_TOKEN_EXPIRE_MINUTES = settings.access_token_expire_minutes
-    pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+        if not verify_password(user_credentials.password, user.password):
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Invalid Credentials")
+
+        return await get_user_token(id=user.id)
 
     @staticmethod
-    def verify_password(plain_password: str, hashed_password: str) -> bool:
-        return AuthService.pwd_context.verify(plain_password, hashed_password)
+    async def signup(db: Session, user: Signup):
+        hashed_password = get_password_hash(user.password)
+        user.password = hashed_password
+        db_user = User(id=None, **user.model_dump())
+        db.add(db_user)
+        db.commit()
+        db.refresh(db_user)
+        return ResponseHandler.create_success(db_user.username, db_user.id, db_user)
+    
+    @staticmethod
+    async def create_admin(db: Session, user: Signup):
+        hashed_password = get_password_hash(user.password)
+        user.password = hashed_password
+        db_user = User(id=None, **user.model_dump())
+        db_user.role = "admin"
+        db.add(db_user)
+        db.commit()
+        db.refresh(db_user)
+        return ResponseHandler.create_success(db_user.username, db_user.id, db_user)
 
     @staticmethod
-    def get_password_hash(password: str) -> str:
-        return AuthService.pwd_context.hash(password)
+    async def get_refresh_token(token, db):
+        payload = get_token_payload(token)
+        user_id = payload.get('id', None)
+        if not user_id:
+            raise ResponseHandler.invalid_token('refresh')
 
-    @staticmethod
-    def create_access_token(data: dict, expires_delta: timedelta = None) -> str:
-        to_encode = data.copy()
-        if expires_delta:
-            expire = datetime.utcnow() + expires_delta
-        else:
-            expire = datetime.utcnow() + timedelta(minutes=15)
-        to_encode.update({"exp": expire})
-        encoded_jwt = jwt.encode(to_encode, AuthService.SECRET_KEY, algorithm=AuthService.ALGORITHM)
-        return encoded_jwt
+        user = db.query(User).filter(User.id == user_id).first()
+        if not user:
+            raise ResponseHandler.invalid_token('refresh')
 
-    @staticmethod
-    def login_user(form_data, db: Session):
-        user = db.query(User).filter(User.email == form_data.username).first()
-        if not user or not AuthService.verify_password(form_data.password, user.hashed_password):
-            raise HTTPException(
-                status_code=401,
-                detail="Incorrect email or password",
-                headers={"WWW-Authenticate": "Bearer"},
-            )
-        access_token_expires = timedelta(minutes=AuthService.ACCESS_TOKEN_EXPIRE_MINUTES)
-        access_token = AuthService.create_access_token(
-            data={"sub": user.email}, expires_delta=access_token_expires
-        )
-        return {"access_token": access_token, "token_type": "bearer"}
+        return await get_user_token(id=user.id, refresh_token=token)

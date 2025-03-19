@@ -1,5 +1,5 @@
 from fastapi import FastAPI , APIRouter
-from app.routers import auth , user
+from app.routers import products, categories, users, auth, accounts , orders
 
 test_router = APIRouter()
 
@@ -30,6 +30,9 @@ app = FastAPI(
     },
 )
 
-app.include_router(test_router)
+app.include_router(products.router)
+app.include_router(categories.router)
+app.include_router(orders.router)
+app.include_router(users.router)
+app.include_router(accounts.router)
 app.include_router(auth.router)
-app.include_router(user.router)
