@@ -7,7 +7,7 @@ from fastapi.testclient import TestClient  # Import TestClient
 from app.main import app  # Import your FastAPI app
 
 # Override the database URL for testing using the same development URL.
-TEST_DATABASE_URL = f"postgresql://{settings.db_username}:{settings.db_password}@{settings.db_hostname}:{settings.db_port}/{settings.db_name}"
+TEST_DATABASE_URL = "postgresql://postgres:postgres@localhost:5432/postgres"
 
 # Create the test database engine
 engine = create_engine(TEST_DATABASE_URL)
