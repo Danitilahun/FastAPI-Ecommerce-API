@@ -13,11 +13,20 @@ class UserService:
             raise HTTPException(status_code=400, detail="Email already registered")
         
         hashed_password = AuthService.get_password_hash(user.password)
-        db_user = User(email=user.email, hashed_password=hashed_password)
+        db_user = User(email=user.email, username=user.username,  password=hashed_password, full_name= user.full_name , is_active = True)
         db.add(db_user)
         db.commit()
         db.refresh(db_user)
-        return UserResponse(email=db_user.email, is_active=db_user.is_active)
+        
+        return UserResponse(
+             id=db_user.id,
+             username=db_user.username,
+             email=db_user.email,
+             full_name=db_user.full_name,
+             is_active=db_user.is_active,
+             created_at=str(db_user.created_at),
+             role=str(db_user.role),
+        )
 
     @staticmethod
     def list_users(db: Session) -> list[UserResponse]:
