@@ -8,7 +8,7 @@ class Settings(BaseSettings):
     db_hostname: str
     db_port: str
     db_name: str
-
+    
     # JWT Config
     secret_key: str
     algorithm: str

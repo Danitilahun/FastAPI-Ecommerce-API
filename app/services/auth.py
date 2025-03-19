@@ -26,12 +26,27 @@ class AuthService:
 
     @staticmethod
     async def signup(db: Session, user: Signup):
+        # Check if the email or username already exists
+        existing_user = db.query(User).filter((User.username == user.username) | (User.email == user.email)).first()
+        
+        if existing_user:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="Username or email already exists."
+            )
+        
+        # Hash the password before storing it
         hashed_password = get_password_hash(user.password)
         user.password = hashed_password
+        
+        # Create a new user instance
         db_user = User(id=None, **user.model_dump())
+        
+        # Add and commit to the database
         db.add(db_user)
         db.commit()
         db.refresh(db_user)
+        
         return ResponseHandler.create_success(db_user.username, db_user.id, db_user)
     
     @staticmethod
