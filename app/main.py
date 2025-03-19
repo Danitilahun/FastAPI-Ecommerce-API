@@ -1,4 +1,5 @@
 from fastapi import FastAPI , APIRouter
+from app.routers import auth , user
 
 test_router = APIRouter()
 
@@ -30,3 +31,5 @@ app = FastAPI(
 )
 
 app.include_router(test_router)
+app.include_router(auth.router)
+app.include_router(user.router)

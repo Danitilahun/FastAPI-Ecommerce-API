@@ -1,46 +1,14 @@
-from pydantic import BaseModel, EmailStr
-from datetime import datetime
+from pydantic import BaseModel
 from typing import List
 
-
-class BaseConfig:
-    from_attributes = True
-
-
-class UserBase(BaseModel):
-    id: int
-    username: str
-    email: EmailStr
-    full_name: str
-    password: str
-    role: str
-    is_active: bool
-    created_at: datetime
-
-    class Config(BaseConfig):
-        pass
-
-
-class Signup(BaseModel):
-    full_name: str
-    username: str
+class UserCreate(BaseModel):
     email: str
     password: str
 
-    class Config(BaseConfig):
-        pass
+class UserResponse(BaseModel):
+    email: str
+    is_active: bool
 
-
-class UserOut(BaseModel):
-    message: str
-    data: UserBase
-
-    class Config(BaseConfig):
-        pass
-
-
-class TokenResponse(BaseModel):
+class Token(BaseModel):
     access_token: str
-    refresh_token: str
-    token_type: str = 'Bearer'
-    expires_in: int
+    token_type: str

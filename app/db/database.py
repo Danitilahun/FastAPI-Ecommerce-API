@@ -1,21 +1,15 @@
 from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-from typing import Generator
+from sqlalchemy.ext.declarative import declarative_base
+from app.core.config import settings
 
-# Define the SQLite database URL (in-memory or file-based)
-DATABASE_URL = "sqlite:///./mydatabase.db"
+DATABASE_URL = f"postgresql://{settings.db_username}:{settings.db_password}@{settings.db_hostname}:{settings.db_port}/{settings.db_name}"
 
-# Create the SQLAlchemy engine
-engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
-
-# Create database tables based on the defined SQLAlchemy models (subclasses of the Base class)
-Base = declarative_base()
-Base.metadata.create_all(engine)
-
+engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+Base = declarative_base()
 
-def get_db() -> Generator:
+def get_db():
     db = SessionLocal()
     try:
         yield db
