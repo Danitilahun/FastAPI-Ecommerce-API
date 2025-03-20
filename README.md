@@ -2,6 +2,8 @@
 
 This project provides a RESTful API for an e-commerce platform built with FastAPI, PostgreSQL (managed locally with Docker Compose), and tested with Pytest. GitHub Actions handle CI/CD.
 
+[Pytest Documentation](pytest_documentation.md)
+
 ## Setup
 
 1.  **Clone the repository.**
