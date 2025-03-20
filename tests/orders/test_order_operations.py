@@ -104,6 +104,10 @@ def test_update_order(client: TestClient, authenticated_admin_user: dict, create
         "category_id": create_category["id"],
         "created_at": datetime.utcnow().isoformat()
     }
+<<<<<<< HEAD
+=======
+    
+>>>>>>> e3c4798954314acd321fb0f6ecd4973e9b465fb8
 
     # Create the product
     response = client.post("/products/", json=product_data, headers=headers)
@@ -171,4 +175,7 @@ def test_delete_order(client: TestClient, authenticated_admin_user: dict, create
     assert response.status_code == status.HTTP_200_OK
     data = response.json()
     assert data["data"]["id"] == order_id
+<<<<<<< HEAD
 
+=======
+>>>>>>> e3c4798954314acd321fb0f6ecd4973e9b465fb8

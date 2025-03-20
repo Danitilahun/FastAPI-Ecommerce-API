@@ -85,4 +85,8 @@ def create_product(client: TestClient, authenticated_admin_user: dict, create_ca
     response = client.post("/products/", json=product_data, headers=headers)
     
     assert response.status_code == 201
+<<<<<<< HEAD
     return response.json()["data"]
+=======
+    return response.json()["data"]
+>>>>>>> e3c4798954314acd321fb0f6ecd4973e9b465fb8
