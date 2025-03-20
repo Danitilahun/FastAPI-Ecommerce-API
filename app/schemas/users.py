@@ -1,5 +1,5 @@
 from pydantic import BaseModel , EmailStr
-from typing import List
+from typing import List, Optional
 from datetime import datetime
 from app.schemas.orders import OrderBase
 
@@ -26,15 +26,22 @@ class UserBase(BaseModel):
 class UserCreate(BaseModel):
     full_name: str
     username: str
-    email: str
+    email: EmailStr
     password: str
 
     class Config(BaseConfig):
         pass
 
 
-class UserUpdate(UserCreate):
-    pass
+class UserUpdate(BaseModel):
+    full_name: Optional[str] = None
+    username: Optional[str] = None
+    email: Optional[EmailStr] = None
+    password: Optional[str] = None 
+
+    class Config:
+        from_attributes = True
+
 
 
 class UserOut(BaseModel):

@@ -35,18 +35,45 @@ class UserService:
         if not db_user:
             ResponseHandler.not_found_error("User", user_id)
 
-        for key, value in updated_user.model_dump().items():
-            setattr(db_user, key, value)
+        if updated_user.email and updated_user.email != db_user.email:
+            existing_user = db.query(User).filter(User.email == updated_user.email).first()
+            if existing_user:
+                raise ResponseHandler.conflict_error("Email is already in use")
+
+        if updated_user.username and updated_user.username != db_user.username:
+            existing_user = db.query(User).filter(User.username == updated_user.username).first()
+            if existing_user:
+                raise ResponseHandler.conflict_error("Username is already in use")
+
+        if updated_user.full_name:
+            db_user.full_name = updated_user.full_name
+        if updated_user.email:
+            db_user.email = updated_user.email
+        if updated_user.username:
+            db_user.username = updated_user.username
+        if updated_user.password:
+            db_user.password = get_password_hash(updated_user.password)
 
         db.commit()
         db.refresh(db_user)
+
         return ResponseHandler.update_success(db_user.username, db_user.id, db_user)
 
     @staticmethod
     def delete_user(db: Session, user_id: int):
+        # Query the user by ID
         db_user = db.query(User).filter(User.id == user_id).first()
+
+        # If the user doesn't exist, raise a not found error
         if not db_user:
             ResponseHandler.not_found_error("User", user_id)
+
+        # Delete the user from the database
         db.delete(db_user)
+        
+        # Commit the deletion
         db.commit()
+
+        # Return a success response with the user's information
         return ResponseHandler.delete_success(db_user.username, db_user.id, db_user)
+
