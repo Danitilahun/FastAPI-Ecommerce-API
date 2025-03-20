@@ -104,3 +104,71 @@ def test_update_order(client: TestClient, authenticated_admin_user: dict, create
         "category_id": create_category["id"],
         "created_at": datetime.utcnow().isoformat()
     }
+    
+
+    # Create the product
+    response = client.post("/products/", json=product_data, headers=headers)
+    created_product = response.json()["data"]
+    product_id = created_product["id"]
+
+    # Create an order with the created product
+    order_data = {
+        "order_items": [{"product_id": product_id, "quantity": 1}]
+    }
+
+    response = client.post("/orders/", json=order_data, headers=headers)
+    created_order = response.json()["data"]
+    order_id = created_order["id"]
+
+    # Update the order
+    updated_order_data = {
+        "order_items": [{"product_id": product_id, "quantity": 2}]  # Update quantity
+    }
+
+    response = client.put(f"/orders/{order_id}", json=updated_order_data, headers=headers)
+
+    assert response.status_code == status.HTTP_200_OK
+    data = response.json()
+    assert data["data"]["order_items"][0]["quantity"] == 2  # Check if the quantity was updated
+    
+    
+def test_delete_order(client: TestClient, authenticated_admin_user: dict, create_product: dict, create_category: dict):
+    """Test that a normal user can delete an order."""
+    headers = {"Authorization": f"Bearer {authenticated_admin_user['access_token']}"}
+    
+    # Create a product for the order
+    product_data = {
+        "title": f"Test Product {uuid.uuid4()}",
+        "description": "Test description",
+        "price": 100,
+        "discount_percentage": 20.0,
+        "rating": 4.5,
+        "stock": 50,
+        "brand": "Test Brand",
+        "thumbnail": "test_thumbnail.png",
+        "images": ["test_image.png"],
+        "is_published": True,
+        "category_id": create_category["id"],
+        "created_at": datetime.utcnow().isoformat()
+    }
+
+    # Create the product
+    response = client.post("/products/", json=product_data, headers=headers)
+    created_product = response.json()["data"]
+    product_id = created_product["id"]
+
+    # Create an order with the created product
+    order_data = {
+        "order_items": [{"product_id": product_id, "quantity": 1}]
+    }
+
+    response = client.post("/orders/", json=order_data, headers=headers)
+    created_order = response.json()["data"]
+    order_id = created_order["id"]
+
+    # Delete the created order
+    response = client.delete(f"/orders/{order_id}", headers=headers)
+
+    assert response.status_code == status.HTTP_200_OK
+    data = response.json()
+    assert data["data"]["id"] == order_id
