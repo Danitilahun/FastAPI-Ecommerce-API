@@ -1,11 +1,11 @@
 import pytest
-import uuid
 from fastapi.testclient import TestClient
+import uuid
 
 @pytest.fixture
 def new_user():
     """Fixture to provide common user data with unique identifiers."""
-    unique_id = str(uuid.uuid4())  # Generate a unique ID
+    unique_id = str(uuid.uuid4()) 
     return {
         "full_name": f"Test User {unique_id}",
         "username": f"testuser_{unique_id}",
@@ -16,7 +16,7 @@ def new_user():
 @pytest.fixture
 def create_test_user(client: TestClient, new_user: dict):
     """Fixture to create a test user before login tests."""
-    client.post("/auth/signup", json=new_user)  # Ensure the user exists before login
+    client.post("/auth/signup", json=new_user) 
     return new_user
 
 @pytest.fixture
