@@ -85,6 +85,7 @@ def test_create_product(client: TestClient, authenticated_admin_user: dict, crea
     assert data["data"]["category_id"] == product_data["category_id"]
 
 
+
 @pytest.mark.parametrize(
     "updated_data, expected_status",
     [
@@ -196,6 +197,8 @@ def test_get_product(client: TestClient, authenticated_admin_user: dict, create_
     assert data["data"]["title"] == product_data["title"]
     assert data["data"]["category_id"] == product_data["category_id"]
 
+
+
 # Test for deleting a product (Admin only)
 def test_delete_product(client: TestClient, authenticated_admin_user: dict, create_category: dict, create_product: dict):
     """Test the deletion of a product by an admin."""
@@ -219,4 +222,3 @@ def test_delete_product(client: TestClient, authenticated_admin_user: dict, crea
     # Ensure the correct product has been deleted by ID
     assert data["data"]["id"] == product_id
     assert "message" in data
-
