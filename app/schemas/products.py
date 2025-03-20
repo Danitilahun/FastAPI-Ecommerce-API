@@ -46,8 +46,24 @@ class ProductCreate(ProductBase):
 
 
 # Update Product
-class ProductUpdate(ProductCreate):
-    pass
+class ProductUpdate(ProductBase):
+    id: Optional[str] = None
+    title: Optional[str] = None
+    description: Optional[str] = None
+    price: Optional[int] = None
+    discount_percentage: Optional[float] = None
+    rating: Optional[float] = None
+    stock: Optional[int] = None
+    brand: Optional[str] = None
+    thumbnail: Optional[str] = None
+    images: Optional[List[str]] = None
+    is_published: Optional[bool] = None
+    created_at: Optional[datetime] = None
+    category_id: Optional[int] = None
+    category: Optional[CategoryBase] = None
+
+    class Config(BaseConfig):
+        pass
 
 
 # Get Products

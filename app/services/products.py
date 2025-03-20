@@ -37,12 +37,16 @@ class ProductService:
         if not db_product:
             ResponseHandler.not_found_error("Product", product_id)
 
-        for key, value in updated_product.model_dump().items():
+        update_data = updated_product.model_dump(exclude_unset=True)
+        
+        for key, value in update_data.items():
             setattr(db_product, key, value)
 
         db.commit()
         db.refresh(db_product)
+        
         return ResponseHandler.update_success(db_product.title, db_product.id, db_product)
+
 
     @staticmethod
     def delete_product(db: Session, product_id: int):
