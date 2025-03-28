@@ -42,7 +42,6 @@ def authenticated_user(client: TestClient, create_test_user: dict):
     assert response.status_code == 200
     return response.json()
 
-
 @pytest.fixture
 def authenticated_admin_user(client: TestClient, create_admin_user: dict):
     """Fixture to log in an admin user and retrieve tokens."""

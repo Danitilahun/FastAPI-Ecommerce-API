@@ -1,4 +1,3 @@
-# tests/auth/conftest.py
 import pytest
 import uuid
 from fastapi.testclient import TestClient

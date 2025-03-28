@@ -4,10 +4,7 @@
 Pytest's documentation is comprehensive, well-organized, and regularly updated. It covers everything from installation to advanced features like plugin development and configuration, making it an essential resource for learning Pytest. [Read the documentation here](https://docs.pytest.org/en/stable/).
 
 **Source Code**  
-The Pytest GitHub repository offers insight into how the framework works. Key areas include the main entry point (`pytest.py`), test discovery (`collection.py`), fixture management (`fixtures.py`), and plugin handling (`hookspec.py`, `hookimpl.py`). Exploring the code is helpful for troubleshooting and contributing to Pytest. [Check out the GitHub repository here](https://github.com/pytest-dev/pytest).
-
-**Open-Source Projects**  
-Many open-source projects use Pytest. Reviewing them on GitHub can teach you about effective test strategies, fixture usage, and how to integrate Pytest with tools like code coverage services. Notable projects include `requests`, `aiohttp`, and `tox`.
+The Pytest GitHub repository offers insight into how the framework works. Key areas include the main entry point, test discovery (`collection.py`), fixture management (`fixtures.py`), and plugin handling (`hookspec.py`, `hookimpl.py`). Exploring the code is helpful for troubleshooting and contributing to Pytest. [Check out the GitHub repository here](https://github.com/pytest-dev/pytest).
 
 **Dependencies**  
 Pytest relies on several dependencies, including:
