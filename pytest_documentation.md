@@ -59,7 +59,7 @@ Pytest integrates seamlessly with various testing tools and libraries, enhancing
 # Design Patterns in Pytest
 
 **Page Object Model (POM)**  
-POM is a design pattern that treats each web page as a class, encapsulating its elements and actions. This approach enhances test maintainability and reduces code duplication. In Pytest, POM can be implemented by creating separate classes for each page, containing methods that interact with the page's elements. This structure promotes cleaner and more organized test code. citeturn0search6
+POM is a design pattern that treats each web page as a class, encapsulating its elements and actions. This approach enhances test maintainability and reduces code duplication. In Pytest, POM can be implemented by creating separate classes for each page, containing methods that interact with the page's elements. This structure promotes cleaner and more organized test code.
 
 **Factory Pattern**  
 The Factory Pattern allows for the creation of objects without specifying the exact class of object that will be created, promoting loose coupling and scalability in code. In Pytest, this pattern can be utilized to generate test data or objects dynamically, enhancing flexibility in test scenarios.
